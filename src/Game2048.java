@@ -7,17 +7,14 @@ public class Game2048 {
         while (true) {
             if (!gameBoard.checkIfCanGo())
                 break;
-            ExpectiMax expectiMax = new ExpectiMax(gameBoard, gameBoard.getScore(), 3);
-            expectiMax.initAndBuildTree();
-            System.out.println("Game simulated!");
-            for (SimulationTreeNode child : expectiMax.getRootNode().getChildren()) {
-                System.out.println("Simulation: " + child.getDirection().name());
-                System.out.println(child.getState().toString());
-            }
+            ExpectiMax expectiMax = new ExpectiMax(gameBoard, gameBoard.getScore(), 9);
+            Board2048.Directions bestDirection = expectiMax.computeDecision();
             System.out.println(gameBoard.toString());
-            System.out.print("Enter your next move: ");
-            String move = in.nextLine();
-            gameBoard.move(getDirection(move).getRotateValue());
+            System.out.println("Best direction: " + bestDirection.name());
+            //System.out.print("Enter your next move: ");
+            //String move = in.nextLine();
+            //gameBoard.move(getDirection(move).getRotateValue());
+            gameBoard.move(bestDirection.getRotateValue());
 
         }
         System.out.println("Game over!");

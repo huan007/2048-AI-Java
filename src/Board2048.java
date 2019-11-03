@@ -94,8 +94,8 @@ public class Board2048 {
         int j = 0;
         Random random = new Random();
         while (true) {
-            i = random.nextInt(boardSize - 1);
-            j = random.nextInt(boardSize - 1);
+            i = random.nextInt(boardSize);
+            j = random.nextInt(boardSize);
             if (this.m_board[i][j] == 0)
                 break;
         }
@@ -219,6 +219,20 @@ public class Board2048 {
         return result;
     }
 
+    public String toStringKey(int level) {
+        String result = "";
+        for (int i = 0; i < m_boardSize; i++) {
+            for (int j = 0; j < m_boardSize; j++) {
+                result += m_board[i][j];
+                if (j != m_boardSize - 1)
+                    result += ",";
+            }
+            result += ";";
+        }
+        result += level;
+        return result;
+    }
+
     public enum Directions {
         UP(1), DOWN(3), LEFT(0), RIGHT(2);
         private final int rotateValue;
@@ -229,6 +243,11 @@ public class Board2048 {
 
         int getRotateValue() {
             return rotateValue;
+        }
+
+        public static Directions getRandomDirection() {
+            Random random = new Random();
+            return values()[random.nextInt(values().length)];
         }
     }
 }
