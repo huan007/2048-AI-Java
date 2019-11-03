@@ -7,6 +7,13 @@ public class Game2048 {
         while (true) {
             if (!gameBoard.checkIfCanGo())
                 break;
+            ExpectiMax expectiMax = new ExpectiMax(gameBoard, gameBoard.getScore(), 3);
+            expectiMax.initAndBuildTree();
+            System.out.println("Game simulated!");
+            for (SimulationTreeNode child : expectiMax.getRootNode().getChildren()) {
+                System.out.println("Simulation: " + child.getDirection().name());
+                System.out.println(child.getState().toString());
+            }
             System.out.println(gameBoard.toString());
             System.out.print("Enter your next move: ");
             String move = in.nextLine();

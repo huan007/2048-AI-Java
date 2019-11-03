@@ -20,15 +20,22 @@ public class Board2048 {
     }
 
     // Constructor with known score and board
-    public Board2048(long score, int[][] board) {
+    public Board2048(long score, int[][] board, int boardSize) {
+        this();
+        this.m_boardSize = boardSize;
         this.m_score = score;
-        this.m_board = board;
+        this.m_board = new int[m_boardSize][m_boardSize];
+        // Perform Deep Copy
+        for (int i = 0; i < m_boardSize; i++) {
+            for (int j = 0; j < m_boardSize; j++) {
+                m_board[i][j] = board[i][j];
+            }
+        }
     }
 
     // Deep Copy Constructor
     public Board2048(Board2048 board2048) {
-        this.m_score = board2048.getScore();
-        this.m_board = board2048.getBoard();
+        this(board2048.getScore(), board2048.getBoard(), board2048.getBoardSize());
     }
 
     private void rotateMatrixClockwise() {
@@ -117,6 +124,17 @@ public class Board2048 {
         }
     }
 
+    protected void moveOnly(int direction) {
+        for (int i = 0; i < direction; i++)
+            this.rotateMatrixClockwise();
+        if (this.canMove()) {
+            this.moveTiles();
+            this.mergeTiles();
+        }
+        for (int i = 0; i < ((4 - direction) % 4); i++)
+            this.rotateMatrixClockwise();
+    }
+
 
     public void moveTiles() {
         int[][] tm = this.m_board;
@@ -167,6 +185,25 @@ public class Board2048 {
 
     public int[][] getBoard() {
         return m_board;
+    }
+
+    public int getBoardSize() {
+        return m_boardSize;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        Board2048 board = (Board2048) obj;
+        if (board.getBoardSize() != m_boardSize)
+            return false;
+        for (int i = 0; i < m_boardSize; i++) {
+            for (int j = 0; j < m_boardSize; j++) {
+                // Two boards have different pieces
+                if (board.m_board[i][j] != m_board[i][j])
+                    return false;
+            }
+        }
+        return true;
     }
 
     @Override
