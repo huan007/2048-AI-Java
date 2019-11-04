@@ -3,20 +3,38 @@ import java.util.HashMap;
 public class ExpectiMax {
     private SimulationTreeNode m_rootNode;
     private long m_currentScore;
-    private int mDepthOfTree;
+    private int m_depthOfTree;
     private HashMap<String, SimulationTreeNode> m_memory_build;
     private HashMap<String, Float> m_memory_calculate;
 
     public ExpectiMax(Board2048 rootState, long currentScore, int depth_of_tree) {
         this.m_rootNode = new SimulationTreeNode(rootState, "max", currentScore);
         this.m_currentScore = currentScore;
-        this.mDepthOfTree = depth_of_tree;
+        this.m_depthOfTree = depth_of_tree;
         m_memory_build = new HashMap<>();
         m_memory_calculate = new HashMap<>();
     }
 
     public void initAndBuildTree() {
-        buildTree(m_rootNode, mDepthOfTree, 0);
+        int emptySpace = 0;
+        int largest = 0;
+        for (int x = 0; x < m_rootNode.getState().getBoardSize(); x++) {
+            for (int y = 0; y < m_rootNode.getState().getBoardSize(); y++) {
+                if (m_rootNode.getState().getBoard()[x][y] == 0)
+                    emptySpace++;
+                if (m_rootNode.getState().getBoard()[x][y] != 0)
+                    if (m_rootNode.getState().getBoard()[x][y] > largest)
+                        largest = m_rootNode.getState().getBoard()[x][y];
+            }
+        }
+        if (emptySpace <= 4) {
+            int depth;
+            depth = m_depthOfTree + 8 - emptySpace;
+            System.gc();
+            buildTree(m_rootNode, depth, 0);
+        }
+        else
+            buildTree(m_rootNode, m_depthOfTree, 0);
     }
 
     public void buildTree(SimulationTreeNode node, int level, int nextPlayer) {
@@ -151,6 +169,6 @@ public class ExpectiMax {
     }
 
     public int getDepthOfTree() {
-        return mDepthOfTree;
+        return m_depthOfTree;
     }
 }

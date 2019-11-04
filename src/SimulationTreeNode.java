@@ -32,13 +32,28 @@ public class SimulationTreeNode {
 
     public float payoff() {
         int boardSize = m_state.getBoardSize();
-        float value = 0;
+        float baseRating = 0;
+        int spaceCount = 0;
         for (int x = 0; x < boardSize; x++) {
             for (int y = 0; y < boardSize; y++) {
-                value += pow(2,m_state.getBoard()[x][y]) * m_weightMatrix[x][y];
+                baseRating += pow(2,m_state.getBoard()[x][y]) * m_weightMatrix[x][y];
+                if (m_state.getBoard()[x][y] == 0)
+                    spaceCount++;
             }
         }
-        return value;
+        float spaceRating = spaceCount * 50;
+        float finalRating = baseRating;
+        //Check if can only go down
+        Board2048 tempBoard= new Board2048(m_state);
+        boolean canMoveUp = tempBoard.checkIfCanMoveDirection(Board2048.Directions.UP);
+        boolean canMoveLeft = tempBoard.checkIfCanMoveDirection(Board2048.Directions.LEFT);
+        boolean canMoveRight = tempBoard.checkIfCanMoveDirection(Board2048.Directions.RIGHT);
+        if (!canMoveUp && !canMoveLeft && !canMoveRight)
+            return baseRating/2;
+        if (!tempBoard.checkIfCanGo())
+            return 0;
+
+        return baseRating;
     }
 
     public boolean isTerminal() {

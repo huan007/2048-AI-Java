@@ -38,7 +38,7 @@ public class Board2048 {
         this(board2048.getScore(), board2048.getBoard(), board2048.getBoardSize());
     }
 
-    private void rotateMatrixClockwise() {
+    protected void rotateMatrixClockwise() {
         int[][] board = this.getBoard();
         int boardSize = this.m_boardSize;
         int halfLimit = (int) (boardSize / 2);
@@ -122,6 +122,20 @@ public class Board2048 {
         for (int i = 0; i < ((4 - direction) % 4); i++) {
             this.rotateMatrixClockwise();
         }
+    }
+
+    public boolean checkIfCanMoveDirection(Directions direction) {
+        boolean result = false;
+        for (int i = 0; i < direction.getRotateValue(); i++) {
+            this.rotateMatrixClockwise();
+        }
+        if (this.canMove()) {
+            result = true;
+        }
+        for (int i = 0; i < ((4 - direction.getRotateValue()) % 4); i++) {
+            this.rotateMatrixClockwise();
+        }
+        return result;
     }
 
     protected void moveOnly(int direction) {
