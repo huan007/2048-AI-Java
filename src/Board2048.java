@@ -99,7 +99,10 @@ public class Board2048 {
             if (this.m_board[i][j] == 0)
                 break;
         }
-        this.m_board[i][j] = 1;
+        if (random.nextInt(100) < 90)
+            this.m_board[i][j] = 1;
+        else
+            this.m_board[i][j] = 2;
     }
 
     public void move(int direction) {

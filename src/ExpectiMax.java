@@ -73,20 +73,23 @@ public class ExpectiMax {
                 for (int x = 0; x < node.getState().getBoardSize(); x++) {
                     if (node.getState().getBoard()[x][y] == 0) {
                         count++;
-                        //Create a deep copy of the current state
+                        // Placing 2 Piece
                         Board2048 newBoard = new Board2048(node.getState());
                         newBoard.getBoard()[x][y] = 1;
-                        String newBoardKey = newBoard.toStringKey(level-1);
-                        if (m_memory_build.containsKey(newBoardKey))
-                            node.addChild(m_memory_build.get(newBoardKey));
-                        else {
-                            SimulationTreeNode newNode =
-                                    new SimulationTreeNode(newBoard, "max", node.getState().getScore());
-                            // Expand tree of the new node
-                            buildTree(newNode, level - 1, (nextPlayer + 1) % 2);
-                            node.addChild(newNode);
-                            m_memory_build.put(newBoardKey, newNode);
-                        }
+                        SimulationTreeNode newNode =
+                                new SimulationTreeNode(newBoard, "max", node.getState().getScore());
+                        // Expand tree of the new node
+                        buildTree(newNode, level - 1, (nextPlayer + 1) % 2);
+                        newNode.setChance(0.9);
+                        node.addChild(newNode);
+                        // Placing 4 Piece
+                        newBoard = new Board2048(node.getState());
+                        newBoard.getBoard()[x][y] = 2;
+                        newNode = new SimulationTreeNode(newBoard, "max", node.getState().getScore());
+                        // Expand tree of the new node
+                        buildTree(newNode, level - 1, (nextPlayer + 1) % 2);
+                        newNode.setChance(0.1);
+                        node.addChild(newNode);
                     }
                 }
             }
@@ -94,7 +97,7 @@ public class ExpectiMax {
             if (count != 0)
                 chance = (double) 1 / (double) count;
             for (SimulationTreeNode child : node.getChildren())
-                child.setChance(chance);
+                child.setChance(child.getChance() * chance);
         }
     }
 
