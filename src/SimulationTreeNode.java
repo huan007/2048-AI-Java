@@ -49,7 +49,6 @@ public class SimulationTreeNode {
                 tileMap.get(value).add(new Point(x,y));
             }
         }
-        int direction = 1;
         for (int x = 0; x < boardSize; x++) {
             int lastValue = m_state.getBoard()[x][0];
             float currentColRating = 0;
@@ -63,10 +62,7 @@ public class SimulationTreeNode {
                 else break;
             }
             colRating += currentColRating;
-            // Flip the direction
-            direction = -direction;
         }
-        direction = 1;
         for (int y = 0; y < boardSize; y++) {
             int lastValue = m_state.getBoard()[0][y];
             float currentRowRating = 0;
@@ -80,7 +76,6 @@ public class SimulationTreeNode {
                 else break;
             }
             rowRating += currentRowRating;
-            direction = -direction;
         }
         if (!m_state.checkIfCanGo())
             return 0;
