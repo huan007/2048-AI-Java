@@ -30,7 +30,7 @@ public class ExpectiMax {
         if (emptySpace <= 4) {
             int depth;
             depth = m_depthOfTree + 4 - emptySpace;
-            System.gc();
+            //System.gc();
             buildTree(m_rootNode, depth, 0);
         }
         else

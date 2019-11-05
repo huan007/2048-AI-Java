@@ -1,6 +1,10 @@
+import static java.lang.Math.pow;
+
 public class GameInstance implements Runnable {
     private static int numberOfGames = 0;
     private static int numberOfGamesPlayed = 0;
+    private static int[] winCount = new int[16];
+    private static int depth = 3;
     @Override
     public void run() {
         // If there is more game to play then play the game, if not then stop the thread
@@ -11,7 +15,7 @@ public class GameInstance implements Runnable {
             while (true) {
                 if (!gameBoard.checkIfCanGo())
                     break;
-                ExpectiMax expectiMax = new ExpectiMax(gameBoard, gameBoard.getScore(), 1);
+                ExpectiMax expectiMax = new ExpectiMax(gameBoard, gameBoard.getScore(), depth);
                 Board2048.Directions bestDirection = expectiMax.computeDecision();
                 //System.out.println(gameBoard.toString());
                 //System.out.println("Best direction: " + bestDirection.name());
@@ -26,12 +30,13 @@ public class GameInstance implements Runnable {
                             largest = gameBoard.getBoard()[x][y];
                 }
             }
-            //winCount[largest]++;
+            recordLargestAchieved(largest);
             System.out.println(String.format("Game %d is now finished", gameNumber));
         }
     }
 
-    public static synchronized void initialize(int numberOfGames) {
+    public static synchronized void initialize(int depth, int numberOfGames) {
+        GameInstance.depth = depth;
         GameInstance.numberOfGames = numberOfGames;
         GameInstance.numberOfGamesPlayed = 0;
     }
@@ -50,5 +55,17 @@ public class GameInstance implements Runnable {
             return GameInstance.numberOfGamesPlayed;
         }
         else return -1;
+    }
+
+    public static synchronized void recordLargestAchieved(int largest) {
+        GameInstance.winCount[largest]++;
+    }
+
+    public static synchronized void printStatistics() {
+        System.out.println("Statistic: ");
+        for (int i = 0; i < 16; i++) {
+            if (winCount[i] != 0)
+                System.out.println(String.format("%d:\t%d", (int) pow(2,i), winCount[i]));
+        }
     }
 }

@@ -6,20 +6,27 @@ public class Game2048 {
     public static void main(String args[]) {
         int numOfThreads = 4;
         Scanner in = new Scanner(System.in);
-        int numberOfGames = 4;
-        int[] winCount = new int[16];
-        GameInstance.initialize(numberOfGames);
+        int numberOfGames = 100;
+        GameInstance.initialize(1, numberOfGames);
+        Thread[] threads = new Thread[numOfThreads];
+        long startTime = System.currentTimeMillis();
         for (int i = 0; i < numOfThreads; i++) {
             Thread t = new Thread(new GameInstance());
+            threads[i] = t;
             t.start();
         }
 
-        //System.out.println("Benchmark is over!");
-        //System.out.println("Statistic: ");
-        //for (int i = 0; i < 16; i++) {
-        //    if (winCount[i] != 0)
-        //        System.out.println(String.format("%d:\t%d", (int) pow(2,i), winCount[i]));
-        //}
+        for (int i = 0; i < numOfThreads; i++) {
+            try {
+                threads[i].join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        long endTime = System.currentTimeMillis();
+        System.out.println("Benchmark is over!");
+        System.out.println(String.format("Time elapse: %d seconds", (endTime - startTime) / 1000));
+        GameInstance.printStatistics();
     }
 
     public static Board2048.Directions getDirection(String move) {
