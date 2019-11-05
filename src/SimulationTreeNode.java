@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static java.lang.Math.pow;
@@ -34,26 +35,53 @@ public class SimulationTreeNode {
         int boardSize = m_state.getBoardSize();
         float baseRating = 0;
         int spaceCount = 0;
+        HashMap<Integer, List<Point>> tileMap = new HashMap<>();
+        float colRating = 0;
+        float rowRating = 0;
         for (int x = 0; x < boardSize; x++) {
             for (int y = 0; y < boardSize; y++) {
-                baseRating += pow(2,m_state.getBoard()[x][y]) * m_weightMatrix[x][y];
-                if (m_state.getBoard()[x][y] == 0)
+                int value = m_state.getBoard()[x][y];
+                if (value == 0)
                     spaceCount++;
+                if (!tileMap.containsKey(value))
+                    tileMap.put(value, new ArrayList<>());
+                // Add coordinate to the list for that tile value (i.e 16 at (0,1))
+                tileMap.get(value).add(new Point(x,y));
             }
         }
-        float spaceRating = spaceCount * 50;
-        float finalRating = baseRating;
-        //Check if can only go down
-        Board2048 tempBoard= new Board2048(m_state);
-        boolean canMoveUp = tempBoard.checkIfCanMoveDirection(Board2048.Directions.UP);
-        boolean canMoveLeft = tempBoard.checkIfCanMoveDirection(Board2048.Directions.LEFT);
-        boolean canMoveRight = tempBoard.checkIfCanMoveDirection(Board2048.Directions.RIGHT);
-        if (!canMoveUp && !canMoveLeft && !canMoveRight)
-            return baseRating/2;
-        if (!tempBoard.checkIfCanGo())
+        for (int x = 0; x < boardSize; x++) {
+            int lastValue = m_state.getBoard()[x][0];
+            float currentColRating = 0;
+            for (int y = 1; y < boardSize; y++) {
+                int value = m_state.getBoard()[x][y];
+                // Monotonically
+                if (value <= lastValue) {
+                    currentColRating += pow(4, lastValue);
+                    lastValue = value;
+                }
+                else break;
+            }
+            colRating += currentColRating;
+        }
+        for (int y = 0; y < boardSize; y++) {
+            int lastValue = m_state.getBoard()[0][y];
+            float currentRowRating = 0;
+            for (int x = 1; x < boardSize; x++) {
+                int value = m_state.getBoard()[x][y];
+                // Monotonically
+                if (value <= lastValue) {
+                    currentRowRating += pow(4, lastValue);
+                    lastValue = value;
+                }
+                else break;
+            }
+            rowRating += currentRowRating;
+        }
+        if (!m_state.checkIfCanGo())
             return 0;
 
-        return baseRating;
+        float spaceRating = spaceCount * 50;
+        return rowRating + colRating + spaceRating;
     }
 
     public boolean isTerminal() {
@@ -104,5 +132,14 @@ public class SimulationTreeNode {
 
     public double getChance() {
         return m_chance;
+    }
+
+    private class Point {
+        public int x;
+        public int y;
+        public Point(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
     }
 }
