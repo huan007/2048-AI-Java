@@ -29,7 +29,7 @@ public class ExpectiMax {
         }
         if (emptySpace <= 4) {
             int depth;
-            depth = m_depthOfTree + 8 - emptySpace;
+            depth = m_depthOfTree + 4 - emptySpace;
             System.gc();
             buildTree(m_rootNode, depth, 0);
         }
@@ -157,7 +157,7 @@ public class ExpectiMax {
         }
 
         if (repeatCount == m_rootNode.getChildren().size()-1) {
-            System.out.println("Had to pick random");
+            //System.out.println("Had to pick random");
             return Board2048.Directions.getRandomDirection();
         }
         return maxDirection;
