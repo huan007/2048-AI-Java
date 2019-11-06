@@ -4,10 +4,10 @@ import static java.lang.Math.pow;
 
 public class Game2048 {
     public static void main(String args[]) {
-        int numOfThreads = 4;
+        int numOfThreads = 8;
         Scanner in = new Scanner(System.in);
         int numberOfGames = 100;
-        GameInstance.initialize(1, numberOfGames);
+        GameInstance.initialize(5, numberOfGames, numOfThreads);
         Thread[] threads = new Thread[numOfThreads];
         long startTime = System.currentTimeMillis();
         for (int i = 0; i < numOfThreads; i++) {

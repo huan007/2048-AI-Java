@@ -141,6 +141,11 @@ public class ExpectiMax {
     }
 
     public Board2048.Directions computeDecision() {
+        int[][] grid = m_rootNode.getState().getBoard();
+        if ((grid[3][0] == grid[2][1]) && (grid[2][1] == grid[3][1]))
+            if ((grid[3][0] != 0) && (grid[2][1] != 0) && (grid[3][1] != 0))
+                if ((grid[0][0] != 0) && (grid[1][0] != 0) && (grid[2][0] != 0))
+                    return Board2048.Directions.RIGHT;
         initAndBuildTree();
         float maxValue = -Float.MAX_VALUE;
         Board2048.Directions maxDirection = null;

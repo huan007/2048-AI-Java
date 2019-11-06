@@ -13,10 +13,10 @@ public class SimulationTreeNode {
     private List<SimulationTreeNode> m_children;
 
     private static double[][] m_weightMatrix = new double[][] {
-            {pow(2,15), pow(2,14), pow(2,13), pow(2,12)},
-            {pow(2,11), pow(2,10), pow(2,9), pow(2,8)},
-            {pow(2,7), pow(2,6), pow(2,5), pow(2,4)},
-            {pow(2,3), pow(2,2), pow(2,1), pow(2,0)}
+            {pow(4,15), pow(4,14), pow(4,13), pow(4,12)},
+            {pow(4,11), pow(4,10), pow(4,9), pow(4,8)},
+            {pow(4,7), pow(4,6), pow(4,5), pow(4,4)},
+            {pow(4,3), pow(4,2), pow(4,1), pow(4,0)}
     };
 
     public SimulationTreeNode(Board2048 state, String nextTurn, long score) {
@@ -34,13 +34,13 @@ public class SimulationTreeNode {
     public float payoff() {
         int boardSize = m_state.getBoardSize();
         float baseRating = 0;
+        float smoothRating = 0;
         int spaceCount = 0;
         HashMap<Integer, List<Point>> tileMap = new HashMap<>();
-        float colRating = 0;
-        float rowRating = 0;
         for (int x = 0; x < boardSize; x++) {
             for (int y = 0; y < boardSize; y++) {
                 int value = m_state.getBoard()[x][y];
+                baseRating += pow(2,value) * m_weightMatrix[x][y];
                 if (value == 0)
                     spaceCount++;
                 if (!tileMap.containsKey(value))
@@ -49,39 +49,35 @@ public class SimulationTreeNode {
                 tileMap.get(value).add(new Point(x,y));
             }
         }
-        for (int x = 0; x < boardSize; x++) {
-            int lastValue = m_state.getBoard()[x][0];
-            float currentColRating = 0;
-            for (int y = 1; y < boardSize; y++) {
-                int value = m_state.getBoard()[x][y];
-                // Monotonically
-                if (value <= lastValue) {
-                    currentColRating += pow(4, lastValue);
-                    lastValue = value;
+        for (int value : tileMap.keySet()) {
+            List<Point> coordinates = (List<Point>) tileMap.get(value);
+            int length = coordinates.size();
+            for (int i = 0; i < length; i++) {
+                for (int j = 1+1; j < length; j++) {
+                    Point coordinate1 = coordinates.get(i);
+                    Point coordinate2 = coordinates.get(j);
+                    if ((Math.abs(coordinate1.x - coordinate2.x) == 0) && (Math.abs(coordinate1.y - coordinate2.y) == 1))
+                        smoothRating++;
+                    if ((Math.abs(coordinate1.x - coordinate2.x) == 1) && (Math.abs(coordinate1.y - coordinate2.y) == 0))
+                        smoothRating++;
                 }
-                else break;
             }
-            colRating += currentColRating;
         }
-        for (int y = 0; y < boardSize; y++) {
-            int lastValue = m_state.getBoard()[0][y];
-            float currentRowRating = 0;
-            for (int x = 1; x < boardSize; x++) {
-                int value = m_state.getBoard()[x][y];
-                // Monotonically
-                if (value <= lastValue) {
-                    currentRowRating += pow(4, lastValue);
-                    lastValue = value;
-                }
-                else break;
-            }
-            rowRating += currentRowRating;
-        }
+        smoothRating = smoothRating * 50;
+        float spaceRating = spaceCount * 20;
+        float finalRating = baseRating + spaceRating + smoothRating;
+        //Check if can only go down
+        Board2048 tempBoard= new Board2048(m_state);
+        boolean canMoveUp = tempBoard.checkIfCanMoveDirection(Board2048.Directions.UP);
+        boolean canMoveLeft = tempBoard.checkIfCanMoveDirection(Board2048.Directions.LEFT);
+        boolean canMoveRight = tempBoard.checkIfCanMoveDirection(Board2048.Directions.RIGHT);
+        if ((!canMoveUp && !canMoveLeft && !canMoveRight) && (spaceCount > 4))
+            return finalRating/2;
+
         if (!m_state.checkIfCanGo())
             return 0;
 
-        float spaceRating = spaceCount * 50;
-        return rowRating + colRating + spaceRating;
+        return  finalRating;
     }
 
     public boolean isTerminal() {

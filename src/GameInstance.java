@@ -3,6 +3,7 @@ import static java.lang.Math.pow;
 public class GameInstance implements Runnable {
     private static int numberOfGames = 0;
     private static int numberOfGamesPlayed = 0;
+    private static int numberOfThreads = 0;
     private static int[] winCount = new int[16];
     private static int depth = 3;
     @Override
@@ -17,11 +18,14 @@ public class GameInstance implements Runnable {
                     break;
                 ExpectiMax expectiMax = new ExpectiMax(gameBoard, gameBoard.getScore(), depth);
                 Board2048.Directions bestDirection = expectiMax.computeDecision();
-                //System.out.println(gameBoard.toString());
-                //System.out.println("Best direction: " + bestDirection.name());
+                if (numberOfThreads == 1) {
+                    System.out.println(gameBoard.toString());
+                    System.out.println("Best direction: " + bestDirection.name());
+                }
                 gameBoard.move(bestDirection.getRotateValue());
             }
-            //System.out.println("Game over!");
+            if (numberOfThreads == 1)
+                System.out.println("Game over!");
             int largest = 0;
             for (int x = 0; x < 4; x++) {
                 for (int y = 0; y < 4; y++) {
@@ -35,10 +39,11 @@ public class GameInstance implements Runnable {
         }
     }
 
-    public static synchronized void initialize(int depth, int numberOfGames) {
+    public static synchronized void initialize(int depth, int numberOfGames, int numberOfThreads) {
         GameInstance.depth = depth;
         GameInstance.numberOfGames = numberOfGames;
         GameInstance.numberOfGamesPlayed = 0;
+        GameInstance.numberOfThreads = numberOfThreads;
     }
 
     public static synchronized void setNumberOfGames(int numberOfGames) {
