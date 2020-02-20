@@ -1,3 +1,8 @@
+package Game2048.AI;
+
+import Game2048.Game.Board2048;
+import Game2048.Game.SimulationTreeNode;
+
 import java.util.HashMap;
 
 public class ExpectiMax {

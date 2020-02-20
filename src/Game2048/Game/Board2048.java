@@ -1,3 +1,5 @@
+package Game2048.Game;
+
 import java.util.Random;
 
 public class Board2048 {
@@ -141,7 +143,7 @@ public class Board2048 {
         return result;
     }
 
-    protected void moveOnly(int direction) {
+    public void moveOnly(int direction) {
         for (int i = 0; i < direction; i++)
             this.rotateMatrixClockwise();
         if (this.canMove()) {
@@ -258,7 +260,7 @@ public class Board2048 {
             this.rotateValue = rotateValue;
         }
 
-        int getRotateValue() {
+        public int getRotateValue() {
             return rotateValue;
         }
 
