@@ -123,9 +123,6 @@ public class Gui2048 extends Application {
         pane.setHgap(15);
         pane.setVgap(15);
 
-
-        //Add KeyListener
-        //
         /*
          * Name: (Annonymous)
          * Purpose: Handle key presses
@@ -133,10 +130,7 @@ public class Gui2048 extends Application {
          * Return: Nope
          */
         pane.setOnKeyPressed(e -> {
-
-            //this handler will take in the keycode and call
-            //appropriate action.
-
+            // This handler will take in the keycode and call appropriate action.
             boolean moved = false;
             switch (e.getCode()) {
                 case UP:
@@ -162,7 +156,6 @@ public class Gui2048 extends Application {
                 default:
                     break;
             }
-
         });
         /** Add your Code for the GUI Here */
         initGrid();//initilize the gridpane
@@ -174,8 +167,6 @@ public class Gui2048 extends Application {
         pane.requestFocus();
         pane.setDisable(true);
         pane.setDisable(false);
-
-
     }
 
     /** Add your own Instance Methods Here */
@@ -189,81 +180,43 @@ public class Gui2048 extends Application {
         gameName.setFont(Font.font("Comic Sans MS", FontPosture.ITALIC, 40));
         scoreText.setFont(Font.font("Comic Sans MS", FontPosture.ITALIC, 25));
         pane.add(gameName, 0, 0, board.getBoardSize() / 2, 1);//add game name text
-        pane.add(scoreText, (board.getBoardSize() + 1) / 2, 0, board.getBoardSize() / 2, 1);
-        //add score text
-
+        pane.add(scoreText, (board.getBoardSize() + 1) / 2, 0, board.getBoardSize() / 2, 1);//add score text
         pane.setHalignment(gameName, HPos.CENTER);
         pane.setHalignment(scoreText, HPos.CENTER);
-
-
         //Initial grid tile and text
         tileGrid = new Rectangle[board.getBoardSize()][board.getBoardSize()];
         tileText = new Text[board.getBoardSize()][board.getBoardSize()];
         scoreValue = (int) board.getScore();//get the score
-
-        //Getting tempArray for value of current grid
+        // Getting tempArray for value of current grid
         int[][] numberGrid = board.getBoard();
-
-        //Set score text equal to current score
+        // Set score text equal to current score
         scoreText.setText("Score: " + scoreValue);
 
-        //determining the size for the tile
-        //this piece of code will suffice extra credit 1A
-        //because it will reduce the size of the tile if there's more than 4
-        //tiles
         int tileSize = TILE_WIDTH * defaultSize / board.getBoardSize();
-        //initilize tileGrid for the color of the grid
+        // Initialize tileGrid for the color of the grid
         for (int row = 0; row < board.getBoardSize(); row++) {
             for (int column = 0; column < board.getBoardSize(); column++) {//determine color of grid based value
-
-                //creaing new rectangle
                 tileGrid[row][column] =
                         new Rectangle(tileSize, tileSize);
-                //these if statements will determine the color
-                //of the rectangle
-                //also they will short-circuit for efficiency.
-                if (numberGrid[row][column] > 2048)
-                    tileGrid[row][column].setFill(COLOR_OTHER);
-                else
-                    tileGrid[row][column].setFill(COLORS[numberGrid[row][column]]);
-
-                //time to add the rectangle into the grid
                 pane.add(tileGrid[row][column], column, row + 1);
-            }//end of inner loop
-        }//end of outer loop
-
-
-        //initialise tileText through loop
+            }
+        }
+        // Initialize tileText through loop
         for (int row = 0; row < board.getBoardSize(); row++) {
             for (int column = 0; column < board.getBoardSize(); column++) {//this loop will determine what text to put in the tile
-                if (numberGrid[row][column] == 0)//blank tile
-                    tileText[row][column] = new Text("");
-
-                else {//put number into tile
-                    tileText[row][column] =
-                            new Text(Integer.toString((int) Math.pow(2,numberGrid[row][column])));
-                    tileText[row][column].setFont(
-                            Font.font("Times New Roman", FontWeight.BOLD,
-                                    TEXT_SIZE_LOW));
-
-                    if (numberGrid[row][column] < 8)
-                        tileText[row][column].setFill(COLOR_VALUE_DARK);
-                    else
-                        tileText[row][column].setFill(COLOR_VALUE_LIGHT);
-                }
-
+                tileText[row][column] = new Text("");
                 //add text into grid pane
                 pane.setHalignment(tileText[row][column], HPos.CENTER);
                 pane.add(tileText[row][column], column, row + 1);
             }
         }
-
-        //Adding my signature
+        // Adding my signature
         mySignature.setFont(
                 Font.font("Comic Sans MS", FontPosture.ITALIC, 15));
         pane.setHalignment(mySignature, HPos.RIGHT);
         pane.add(mySignature, board.getBoardSize() - 2, board.getBoardSize() + 1, 2, 1);
 
+        update();
     }
 
     /*
@@ -275,30 +228,25 @@ public class Gui2048 extends Application {
     private void update() {//update the grid GUI & Score
         scoreValue = (int) board.getScore();//get the score
 
-        //Getting tempArray for value of current grid
+        // Getting tempArray for value of current grid
         int[][] numberGrid = board.getBoard();
 
-        //Set score text equal to current score
+        // Set score text equal to current score
         scoreText.setText("Score: " + scoreValue);
-        //updating tileGrid for the color of the grid
+        // Updating tileGrid for the color of the grid
         for (int row = 0; row < board.getBoardSize(); row++) {
             for (int column = 0; column < board.getBoardSize(); column++) {//determine color of grid based value
-
-                //these if statements will determine the color
-                //of the rectangle
-                //also they will short-circuit for efficiency.
                 if (numberGrid[row][column] > 2048)
                     tileGrid[row][column].setFill(COLOR_OTHER);
                 else
                     tileGrid[row][column].setFill(COLORS[numberGrid[row][column]]);
 
-            }//end of inner loop
-        }//end of outter loop
+            }
+        }
 
-
-        //updating tileText through loop
+        // Updating tileText through loop
         for (int row = 0; row < board.getBoardSize(); row++) {
-            for (int column = 0; column < board.getBoardSize(); column++) {//this loop will determine what text to put in the tile
+            for (int column = 0; column < board.getBoardSize(); column++) {//determine what text to put in the tile
                 if (numberGrid[row][column] == 0)//blank tile
                     tileText[row][column].setText("");
 
