@@ -1,8 +1,8 @@
+package Game2048.Game;
+
 import java.util.Scanner;
 
-import static java.lang.Math.pow;
-
-public class Game2048 {
+public class Benchmark2048 {
     public static void main(String args[]) {
         int numOfThreads = 8;
         Scanner in = new Scanner(System.in);

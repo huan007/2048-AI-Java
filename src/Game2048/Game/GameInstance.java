@@ -1,3 +1,7 @@
+package Game2048.Game;
+
+import Game2048.AI.ExpectiMax;
+
 import static java.lang.Math.pow;
 
 public class GameInstance implements Runnable {
