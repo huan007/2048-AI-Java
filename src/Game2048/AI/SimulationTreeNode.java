@@ -1,4 +1,6 @@
-package Game2048.Game;
+package Game2048.AI;
+
+import Game2048.Game.Board2048;
 
 import java.util.ArrayList;
 import java.util.HashMap;
