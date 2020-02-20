@@ -80,17 +80,17 @@ public class Gui2048 extends Application {
     };
     private static final Color COLOR_GAME_OVER = Color.rgb(238, 228, 218, 0.73);
 
-    private static final Color COLOR_VALUE_LIGHT = Color.rgb(249, 246, 242);
     // For tiles >= 8
+    private static final Color COLOR_VALUE_LIGHT = Color.rgb(249, 246, 242);
 
-    private static final Color COLOR_VALUE_DARK = Color.rgb(119, 110, 101);
     // For tiles < 8
+    private static final Color COLOR_VALUE_DARK = Color.rgb(119, 110, 101);
 
-    private GridPane pane;
 
     /** Add your own Instance Variables here */
     //GridPane is already created
     private StackPane mainPane = new StackPane();
+    private GridPane pane;
     final Text gameName = new Text("2048"); //Name of the game won't change
     Text scoreText = new Text("Score: 0");
     Rectangle[][] tileGrid;
@@ -153,19 +153,22 @@ public class Gui2048 extends Application {
 					update();
 					break;
 
+                case R:
+                    restart();
+                    break;
+
                 default:
                     break;
             }
         });
         /** Add your Code for the GUI Here */
-        initGrid();//initilize the gridpane
+        initGrid();//initialize the GridPane
         mainPane.getChildren().add(pane);
         mainScene = new Scene(mainPane);
         primaryStage.setTitle("GUI 2048");
         primaryStage.setScene(mainScene);
         primaryStage.show();
         pane.requestFocus();
-        pane.setDisable(true);
         pane.setDisable(false);
     }
 
@@ -281,17 +284,29 @@ public class Gui2048 extends Application {
             }
         }
         if (!board.checkIfCanGo()) {
-            pane.setDisable(true);
-            gameOverPane = new GridPane();
-            gameOverPane.setStyle(
-                    "-fx-background-color: rgb(238, 228, 218,0.73)");
-            gameOverText = new Text("Game Over!");
-            gameOverText.setFont(Font.font("Comic Sans MS", 40));
-            gameOverText.setFill(Color.BLACK);
-            gameOverPane.add(gameOverText, 0, 0);
-            gameOverPane.setAlignment(Pos.CENTER);
-            gameOverPane.setHalignment(gameOverText, HPos.CENTER);
-            mainPane.getChildren().addAll(gameOverPane);
+            if (gameOverPane == null) {
+                gameOverPane = new GridPane();
+                gameOverPane.setStyle(
+                        "-fx-background-color: rgb(238, 228, 218,0.73)");
+                gameOverText = new Text("Game Over!");
+                gameOverText.setFont(Font.font("Comic Sans MS", 40));
+                gameOverText.setFill(Color.BLACK);
+                gameOverPane.add(gameOverText, 0, 0);
+                gameOverPane.setAlignment(Pos.CENTER);
+                gameOverPane.setHalignment(gameOverText, HPos.CENTER);
+                mainPane.getChildren().add(gameOverPane);
+            }
+        }
+    }
+
+    private void restart() {
+        board = new Board2048();
+        pane.requestFocus();
+        pane.setDisable(false);
+        update();
+        if (gameOverPane != null) {
+            mainPane.getChildren().remove(gameOverPane);
+            gameOverPane = null;
         }
     }
 
