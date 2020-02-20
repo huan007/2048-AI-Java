@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class Benchmark2048 {
     public static void main(String args[]) {
-        int numOfThreads = 8;
+        int numOfThreads = 1;
         Scanner in = new Scanner(System.in);
         int numberOfGames = 100;
         GameInstance.initialize(5, numberOfGames, numOfThreads);

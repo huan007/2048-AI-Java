@@ -13,12 +13,12 @@ public class Board2048 {
         this.m_boardSize = 4;
         this.m_board = new int[][] {
                 {0, 0, 0, 0},
-                {1, 0, 0, 0},
                 {0, 0, 0, 0},
-                {1, 0, 0, 0}
+                {0, 0, 0, 0},
+                {0, 0, 0, 0}
         };
-        //placeRandomTile();
-        //placeRandomTile();
+        placeRandomTile();
+        placeRandomTile();
     }
 
     // Constructor with known score and board
