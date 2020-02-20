@@ -178,7 +178,7 @@ public class Board2048 {
                 if ((tm[i][j] == tm[i][j + 1]) && (tm[i][j] != 0)) {
                     tm[i][j] = tm[i][j] + 1;
                     tm[i][j + 1] = 0;
-                    this.m_score += tm[i][j];
+                    this.m_score += Math.pow(2, tm[i][j]);
                     this.moveTiles();
                 }
             }
