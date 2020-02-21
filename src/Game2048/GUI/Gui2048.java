@@ -29,10 +29,11 @@ package Game2048.GUI; /**
  *
  */
 
+import Game2048.AI.ExpectiMax;
 import Game2048.Game.Board2048;
 import Game2048.Game.Board2048.Directions;
 import javafx.application.*;
-import javafx.scene.control.*;
+import javafx.concurrent.Task;
 import javafx.scene.*;
 import javafx.scene.paint.*;
 import javafx.scene.shape.*;
@@ -43,9 +44,6 @@ import javafx.scene.input.*;
 import javafx.scene.text.*;
 import javafx.geometry.*;
 
-import java.util.*;
-import java.io.*;
-
 public class Gui2048 extends Application {
     private String outputBoard; // The filename for where to save the Board
     private Board2048 board; // The 2048 Game Board
@@ -53,10 +51,9 @@ public class Gui2048 extends Application {
     private static final int TILE_WIDTH = 106;
 
     private static final int TEXT_SIZE_LOW = 55; // Low value tiles (2,4,8,etc)
-    private static final int TEXT_SIZE_MID = 45; // Mid value tiles
-    //(128, 256, 512)
-    private static final int TEXT_SIZE_HIGH = 35; // High value tiles
-    //(1024, 2048, Higher)
+    private static final int TEXT_SIZE_MID = 45; // Mid value tiles (128, 256, 512)
+    private static final int TEXT_SIZE_HIGH = 40; // High value tiles (1024, 2048, 4096, 8192)
+    private static final int TEXT_SIZE_EXTREME = 30; // Extreme value tiles (16k, 32k, 64k)
 
     // Fill colors for each of the Tile values
     private static final Color COLOR_EMPTY = Color.rgb(238, 228, 218, 0.35);
@@ -101,6 +98,10 @@ public class Gui2048 extends Application {
     Scene mainScene;
     final int defaultSize = 4;
     Text mySignature = new Text("By Huan Nguyen");
+    boolean isAIEnabled = false;
+    AiTask aiTask;
+    Text depthText;
+    int depth = 7;
 
     /*
      * Name: start
@@ -175,7 +176,7 @@ public class Gui2048 extends Application {
         }
         // Initialize tileText through loop
         for (int row = 0; row < board.getBoardSize(); row++) {
-            for (int column = 0; column < board.getBoardSize(); column++) {//this loop will determine what text to put in the tile
+            for (int column = 0; column < board.getBoardSize(); column++) {
                 tileText[row][column] = new Text("");
                 //add text into grid pane
                 pane.setHalignment(tileText[row][column], HPos.CENTER);
@@ -183,11 +184,16 @@ public class Gui2048 extends Application {
             }
         }
         // Adding my signature
-        mySignature.setFont(
-                Font.font("Comic Sans MS", FontPosture.ITALIC, 15));
+        mySignature.setFont(Font.font("Comic Sans MS", FontPosture.ITALIC, 15));
         pane.setHalignment(mySignature, HPos.RIGHT);
-        pane.add(mySignature, board.getBoardSize() - 2, board.getBoardSize() + 1, 2, 1);
+        pane.add(mySignature, board.getBoardSize() - 2, board.getBoardSize() + 1,
+                2, 1);
 
+        // Display AI Depth of Search
+        depthText = new Text("Depth of Search: " + depth);
+        depthText.setFont(Font.font("Comic Sans MS", FontPosture.ITALIC, 15));
+        pane.add(depthText, 0, board.getBoardSize() + 1,
+                2, 1);
         update();
     }
 
@@ -208,7 +214,7 @@ public class Gui2048 extends Application {
         // Updating tileGrid for the color of the grid
         for (int row = 0; row < board.getBoardSize(); row++) {
             for (int column = 0; column < board.getBoardSize(); column++) {//determine color of grid based value
-                if (numberGrid[row][column] > 2048)
+                if (numberGrid[row][column] >= 13)
                     tileGrid[row][column].setFill(COLOR_OTHER);
                 else
                     tileGrid[row][column].setFill(COLORS[numberGrid[row][column]]);
@@ -225,26 +231,33 @@ public class Gui2048 extends Application {
                 else {//put number into tile
                     tileText[row][column].setText(
                             Integer.toString((int) Math.pow(2, numberGrid[row][column])));
-                    if (numberGrid[row][column] < 128) {
+                    if (numberGrid[row][column] < 7) {
                         tileText[row][column].setFont(
                                 Font.font("Times New Roman",
                                         FontWeight.BOLD, TEXT_SIZE_LOW));
                     }
 
-                    if (numberGrid[row][column] >= 128 &&
-                            numberGrid[row][column] < 1024) {
+                    if (numberGrid[row][column] >= 7 &&
+                            numberGrid[row][column] < 10) {
                         tileText[row][column].setFont(
                                 Font.font("Times New Roman",
                                         FontWeight.BOLD, TEXT_SIZE_MID));
                     }
 
-                    if (numberGrid[row][column] >= 1024) {
+                    if (numberGrid[row][column] >= 10 &&
+                            numberGrid[row][column] < 14) {
                         tileText[row][column].setFont(
                                 Font.font("Times New Roman",
                                         FontWeight.BOLD, TEXT_SIZE_HIGH));
                     }
 
-                    if (numberGrid[row][column] < 8)
+                    if (numberGrid[row][column] >= 14) {
+                        tileText[row][column].setFont(
+                                Font.font("Times New Roman",
+                                        FontWeight.BOLD, TEXT_SIZE_EXTREME));
+                    }
+
+                    if (numberGrid[row][column] < 3)
                         tileText[row][column].setFill(COLOR_VALUE_DARK);
                     else
                         tileText[row][column].setFill(COLOR_VALUE_LIGHT);
@@ -253,6 +266,7 @@ public class Gui2048 extends Application {
             }
         }
         if (!board.checkIfCanGo()) {
+            disableAI();
             if (gameOverPane == null) {
                 gameOverPane = new GridPane();
                 gameOverPane.setStyle(
@@ -266,6 +280,8 @@ public class Gui2048 extends Application {
                 mainPane.getChildren().add(gameOverPane);
             }
         }
+        if (isAIEnabled)
+            runAI();
     }
 
     private void restart() {
@@ -279,12 +295,46 @@ public class Gui2048 extends Application {
         }
     }
 
-    private void enableAI() {
+    private void switchDepthOfSearch() {
+        if (depth == 7)
+            depth = 5;
+        else if (depth == 5)
+            depth = 7;
+        depthText.setText("Depth of Search: " + depth);
+    }
 
+    private void enableAI() {
+        isAIEnabled = true;
+        runAI();
+        pane.setOnKeyPressed(null);
+        pane.setOnKeyPressed(limitedKeyHandler);
     }
 
     private void disableAI() {
+        stopAI();
+        isAIEnabled = false;
+        pane.setOnKeyPressed(null);
+        pane.setOnKeyPressed(normalKeyHandler);
+    }
 
+    private void runAI() {
+        // Only run AI if game is not over
+        if (board.checkIfCanGo()) {
+            aiTask = new AiTask(board, depth);
+            aiTask.setOnSucceeded((succeededEvent) -> {
+                if (aiTask.getValue() != null) {
+                    board.move(aiTask.getValue().getRotateValue());
+                    update();
+                }
+            });
+            Thread t = new Thread(aiTask);
+            t.setDaemon(true);
+            t.start();
+        }
+    }
+
+    private void stopAI() {
+        aiTask.cancel();
     }
 
     /** Event Handlers **/
@@ -316,9 +366,15 @@ public class Gui2048 extends Application {
                     restart();
                     break;
 
+                case C:
+                    switchDepthOfSearch();
+                    break;
+
                 case ENTER:
-                    pane.setOnKeyPressed(null);
-                    pane.setOnKeyPressed(limitedKeyHandler);
+                    // If Game Over then reset the game and enable AI
+                    if (!board.checkIfCanGo()) {
+                        restart();
+                    }
                     enableAI();
                     break;
 
@@ -332,9 +388,11 @@ public class Gui2048 extends Application {
         @Override
         public void handle(KeyEvent keyEvent) {
             switch (keyEvent.getCode()) {
+                case C:
+                    switchDepthOfSearch();
+                    break;
+
                 case ENTER:
-                    pane.setOnKeyPressed(null);
-                    pane.setOnKeyPressed(normalKeyHandler);
                     disableAI();
                     break;
 
@@ -344,6 +402,24 @@ public class Gui2048 extends Application {
         }
     };
 
+    /** Task Class for AI **/
+    public class AiTask extends Task<Directions> {
+
+        Board2048 m_gameBoard;
+        int m_depth = 7;
+
+        public AiTask(Board2048 originalBoard, int depth) {
+            this.m_gameBoard = originalBoard;
+            m_depth = depth;
+        }
+
+        @Override
+        protected Directions call() throws Exception {
+            ExpectiMax expectiMax = new ExpectiMax(m_gameBoard, m_gameBoard.getScore(), m_depth);
+            Board2048.Directions bestDirection = expectiMax.computeDecision();
+            return bestDirection;
+        }
+    }
     /** DO NOT EDIT BELOW */
 
     // The method used to process the command line arguments
