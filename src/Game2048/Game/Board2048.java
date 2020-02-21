@@ -6,6 +6,7 @@ public class Board2048 {
     private long m_score;
     private int[][] m_board;
     private int m_boardSize;
+    private final int smallerTileChance = 90;
 
     // Default Constructor
     public Board2048() {
@@ -101,7 +102,7 @@ public class Board2048 {
             if (this.m_board[i][j] == 0)
                 break;
         }
-        if (random.nextInt(100) < 90)
+        if (random.nextInt(100) < smallerTileChance)
             this.m_board[i][j] = 1;
         else
             this.m_board[i][j] = 2;
