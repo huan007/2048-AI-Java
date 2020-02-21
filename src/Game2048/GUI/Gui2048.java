@@ -129,38 +129,7 @@ public class Gui2048 extends Application {
          * Para: No
          * Return: Nope
          */
-        pane.setOnKeyPressed(e -> {
-            // This handler will take in the keycode and call appropriate action.
-            boolean moved = false;
-            switch (e.getCode()) {
-                case UP:
-                    board.move(Directions.UP.getRotateValue());//calling move method
-                    update();
-                    break;
-
-                case DOWN:
-					board.move(Directions.DOWN.getRotateValue());//calling move method
-					update();
-					break;
-
-                case LEFT:
-					board.move(Directions.LEFT.getRotateValue());//calling move method
-					update();
-					break;
-
-                case RIGHT:
-					board.move(Directions.RIGHT.getRotateValue());//calling move method
-					update();
-					break;
-
-                case R:
-                    restart();
-                    break;
-
-                default:
-                    break;
-            }
-        });
+        pane.setOnKeyPressed(normalKeyHandler);
         /** Add your Code for the GUI Here */
         initGrid();//initialize the GridPane
         mainPane.getChildren().add(pane);
@@ -310,6 +279,70 @@ public class Gui2048 extends Application {
         }
     }
 
+    private void enableAI() {
+
+    }
+
+    private void disableAI() {
+
+    }
+
+    /** Event Handlers **/
+    EventHandler<KeyEvent> normalKeyHandler = new EventHandler<KeyEvent>() {
+        @Override
+        public void handle(KeyEvent keyEvent) {
+            switch (keyEvent.getCode()) {
+                case UP:
+                    board.move(Directions.UP.getRotateValue());//calling move method
+                    update();
+                    break;
+
+                case DOWN:
+                    board.move(Directions.DOWN.getRotateValue());//calling move method
+                    update();
+                    break;
+
+                case LEFT:
+                    board.move(Directions.LEFT.getRotateValue());//calling move method
+                    update();
+                    break;
+
+                case RIGHT:
+                    board.move(Directions.RIGHT.getRotateValue());//calling move method
+                    update();
+                    break;
+
+                case R:
+                    restart();
+                    break;
+
+                case ENTER:
+                    pane.setOnKeyPressed(null);
+                    pane.setOnKeyPressed(limitedKeyHandler);
+                    enableAI();
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    };
+
+    EventHandler<KeyEvent> limitedKeyHandler = new EventHandler<KeyEvent>() {
+        @Override
+        public void handle(KeyEvent keyEvent) {
+            switch (keyEvent.getCode()) {
+                case ENTER:
+                    pane.setOnKeyPressed(null);
+                    pane.setOnKeyPressed(normalKeyHandler);
+                    disableAI();
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    };
 
     /** DO NOT EDIT BELOW */
 
