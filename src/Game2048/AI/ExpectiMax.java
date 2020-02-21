@@ -8,6 +8,7 @@ public class ExpectiMax {
     private SimulationTreeNode m_rootNode;
     private long m_currentScore;
     private int m_depthOfTree;
+    private int m_extraDepth = 0;
     private HashMap<String, SimulationTreeNode> m_memory_build;
     private HashMap<String, Float> m_memory_calculate;
 
@@ -32,7 +33,7 @@ public class ExpectiMax {
             }
         }
         if (emptySpace <= 4) {
-            int depth = m_depthOfTree + 2;
+            int depth = m_depthOfTree + m_extraDepth;
             //System.gc();
             buildTree(m_rootNode, depth, 0);
         }
