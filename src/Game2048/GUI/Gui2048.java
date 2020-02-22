@@ -297,6 +297,8 @@ public class Gui2048 extends Application {
 
     private void switchDepthOfSearch() {
         if (depth == 7)
+            depth = 9;
+        else if (depth == 9)
             depth = 5;
         else if (depth == 5)
             depth = 7;

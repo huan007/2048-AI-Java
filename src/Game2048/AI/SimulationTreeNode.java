@@ -16,7 +16,7 @@ public class SimulationTreeNode {
     private double m_chance;
     private List<SimulationTreeNode> m_children;
 
-    private final float WEIGHT_SCALE = 0.00000001f;
+    private final float WEIGHT_SCALE = 0.000001f;
     private final float SPACE_SCALE = 50;
     private final float SMOOTH_SCALE = 50;
 
@@ -78,6 +78,18 @@ public class SimulationTreeNode {
         smoothRating = smoothRating * SMOOTH_SCALE;
         float finalRating = baseRating + spaceRating + smoothRating;
 
+        int[][] board = m_state.getBoard();
+        //for (int x = 0; x < boardSize; x++) {
+        //    for (int y = 0; y < 2; y++) {
+        //        if (board[x][y] > 4 && board[x][y] == board[x][y+2] && board[x][y+1] == (board[x][y] + 1))
+        //            return 0;
+        //    }
+        //}
+
+        //if (board[0][3] > 6 && board[0][3] == board[1][2])
+        //    if (board[1][0] > 3 && board[1][0] == board[2][1])
+        //    return 0;
+
         // Check if game over
         if (!m_state.checkIfCanGo())
             return 0;
@@ -89,7 +101,7 @@ public class SimulationTreeNode {
         boolean canMoveRight = tempBoard.checkIfCanMoveDirection(Board2048.Directions.RIGHT);
         boolean canMoveDown = tempBoard.checkIfCanMoveDirection(Board2048.Directions.DOWN);
         if ((!canMoveUp && !canMoveLeft && !canMoveRight && canMoveDown))
-            return 0;
+            return finalRating/4;
 
         return  finalRating;
     }

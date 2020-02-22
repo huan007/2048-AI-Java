@@ -4,10 +4,10 @@ import java.util.Scanner;
 
 public class Benchmark2048 {
     public static void main(String args[]) {
-        int numOfThreads = 1;
+        int numOfThreads = 3;
         Scanner in = new Scanner(System.in);
         int numberOfGames = 100;
-        GameInstance.initialize(5, numberOfGames, numOfThreads);
+        GameInstance.initialize(9, numberOfGames, numOfThreads);
         Thread[] threads = new Thread[numOfThreads];
         long startTime = System.currentTimeMillis();
         for (int i = 0; i < numOfThreads; i++) {

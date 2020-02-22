@@ -84,15 +84,6 @@ public class ExpectiMax {
                                 new SimulationTreeNode(newBoard, "max", node.getState().getScore());
                         // Expand tree of the new node
                         buildTree(newNode, level - 1, (nextPlayer + 1) % 2);
-                        newNode.setChance(0.9);
-                        node.addChild(newNode);
-                        // Placing 4 Piece
-                        newBoard = new Board2048(node.getState());
-                        newBoard.getBoard()[x][y] = 2;
-                        newNode = new SimulationTreeNode(newBoard, "max", node.getState().getScore());
-                        // Expand tree of the new node
-                        buildTree(newNode, level - 1, (nextPlayer + 1) % 2);
-                        newNode.setChance(0.1);
                         node.addChild(newNode);
                     }
                 }
@@ -101,12 +92,12 @@ public class ExpectiMax {
             if (count != 0)
                 chance = (double) 1 / (double) count;
             for (SimulationTreeNode child : node.getChildren())
-                child.setChance(child.getChance() * chance);
+                child.setChance(chance);
         }
     }
 
-    public float expectimax(SimulationTreeNode node) {
-        String stateKey = node.getState().toStringKey(1);
+    public float expectimax(SimulationTreeNode node, int level) {
+        String stateKey = node.getState().toStringKey(level-1);
         if (m_memory_calculate.containsKey(stateKey))
             return m_memory_calculate.get(stateKey);
         else {
@@ -120,7 +111,7 @@ public class ExpectiMax {
             else if (node.isMaxPlayer()) {
                 float maxValue = -Float.MAX_VALUE;
                 for (SimulationTreeNode child : node.getChildren()) {
-                    float newValue = expectimax(child);
+                    float newValue = expectimax(child, level-1);
                     if (newValue > maxValue)
                         maxValue = newValue;
                 }
@@ -131,7 +122,7 @@ public class ExpectiMax {
             else if (node.isChancePlayer()) {
                 float value = 0;
                 for (SimulationTreeNode child : node.getChildren()) {
-                    value += expectimax(child) * child.getChance();
+                    value += expectimax(child, level-1) * child.getChance();
                 }
                 m_memory_calculate.put(stateKey, value);
                 return value;
@@ -146,16 +137,16 @@ public class ExpectiMax {
 
     public Board2048.Directions computeDecision() {
         int[][] grid = m_rootNode.getState().getBoard();
-        if ((grid[3][0] == grid[2][1]) && (grid[2][1] == grid[3][1]))
-            if ((grid[3][0] != 0) && (grid[2][1] != 0) && (grid[3][1] != 0))
-                if ((grid[0][0] != 0) && (grid[1][0] != 0) && (grid[2][0] != 0))
-                    return Board2048.Directions.RIGHT;
+        //if ((grid[0][3] == grid[1][2]) && (grid[1][2] == grid[1][3]))
+        //    if ((grid[0][3] != 0) && (grid[1][2] != 0) && (grid[1][3] != 0))
+        //        if ((grid[0][0] != 0) && (grid[0][1] != 0) && (grid[0][2] != 0))
+        //            return Board2048.Directions.UP;
         initAndBuildTree();
         float maxValue = -Float.MAX_VALUE;
         Board2048.Directions maxDirection = null;
         int repeatCount = 0;
         for (SimulationTreeNode child : m_rootNode.getChildren()) {
-            float value = expectimax(child);
+            float value = expectimax(child, m_depthOfTree);
             if (value > maxValue) {
                 maxValue = value;
                 maxDirection = child.getDirection();

@@ -6,7 +6,7 @@ public class Board2048 {
     private long m_score;
     private int[][] m_board;
     private int m_boardSize;
-    private final int smallerTileChance = 90;
+    private final int smallerTileChance = 100;
 
     // Default Constructor
     public Board2048() {
