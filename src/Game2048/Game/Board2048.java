@@ -6,6 +6,7 @@ public class Board2048 {
     private long m_score;
     private int[][] m_board;
     private int m_boardSize;
+    private final int smallerTileChance = 100;
 
     // Default Constructor
     public Board2048() {
@@ -13,12 +14,12 @@ public class Board2048 {
         this.m_boardSize = 4;
         this.m_board = new int[][] {
                 {0, 0, 0, 0},
-                {1, 0, 0, 0},
                 {0, 0, 0, 0},
-                {1, 0, 0, 0}
+                {0, 0, 0, 0},
+                {0, 0, 0, 0}
         };
-        //placeRandomTile();
-        //placeRandomTile();
+        placeRandomTile();
+        placeRandomTile();
     }
 
     // Constructor with known score and board
@@ -101,7 +102,7 @@ public class Board2048 {
             if (this.m_board[i][j] == 0)
                 break;
         }
-        if (random.nextInt(100) < 90)
+        if (random.nextInt(100) < smallerTileChance)
             this.m_board[i][j] = 1;
         else
             this.m_board[i][j] = 2;
@@ -178,7 +179,7 @@ public class Board2048 {
                 if ((tm[i][j] == tm[i][j + 1]) && (tm[i][j] != 0)) {
                     tm[i][j] = tm[i][j] + 1;
                     tm[i][j + 1] = 0;
-                    this.m_score += tm[i][j];
+                    this.m_score += Math.pow(2, tm[i][j]);
                     this.moveTiles();
                 }
             }

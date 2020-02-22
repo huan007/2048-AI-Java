@@ -16,11 +16,16 @@ public class SimulationTreeNode {
     private double m_chance;
     private List<SimulationTreeNode> m_children;
 
+    private final float WEIGHT_SCALE = 0.000001f;
+    private final float SPACE_SCALE = 50;
+    private final float SMOOTH_SCALE = 50;
+
+
     private static double[][] m_weightMatrix = new double[][] {
-            {pow(4,15), pow(4,14), pow(4,13), pow(4,12)},
-            {pow(4,11), pow(4,10), pow(4,9), pow(4,8)},
-            {pow(4,7), pow(4,6), pow(4,5), pow(4,4)},
-            {pow(4,3), pow(4,2), pow(4,1), pow(4,0)}
+            {pow(8,15), pow(8,14), pow(8,13), pow(8,12)},
+            {pow(8,8), pow(8,9), pow(8,10), pow(8,11)},
+            {pow(8,7), pow(8,6), pow(8,5), pow(8,4)},
+            {pow(8,0), pow(8,1), pow(8,2), pow(8,3)}
     };
 
     public SimulationTreeNode(Board2048 state, String nextTurn, long score) {
@@ -38,6 +43,7 @@ public class SimulationTreeNode {
     public float payoff() {
         int boardSize = m_state.getBoardSize();
         float baseRating = 0;
+        float spaceRating = 0;
         float smoothRating = 0;
         int spaceCount = 0;
         HashMap<Integer, List<Point>> tileMap = new HashMap<>();
@@ -57,7 +63,7 @@ public class SimulationTreeNode {
             List<Point> coordinates = (List<Point>) tileMap.get(value);
             int length = coordinates.size();
             for (int i = 0; i < length; i++) {
-                for (int j = 1+1; j < length; j++) {
+                for (int j = i+1; j < length; j++) {
                     Point coordinate1 = coordinates.get(i);
                     Point coordinate2 = coordinates.get(j);
                     if ((Math.abs(coordinate1.x - coordinate2.x) == 0) && (Math.abs(coordinate1.y - coordinate2.y) == 1))
@@ -67,19 +73,35 @@ public class SimulationTreeNode {
                 }
             }
         }
-        smoothRating = smoothRating * 50;
-        float spaceRating = spaceCount * 20;
+        baseRating = baseRating * WEIGHT_SCALE;
+        spaceRating = spaceCount * SPACE_SCALE;
+        smoothRating = smoothRating * SMOOTH_SCALE;
         float finalRating = baseRating + spaceRating + smoothRating;
+
+        int[][] board = m_state.getBoard();
+        //for (int x = 0; x < boardSize; x++) {
+        //    for (int y = 0; y < 2; y++) {
+        //        if (board[x][y] > 4 && board[x][y] == board[x][y+2] && board[x][y+1] == (board[x][y] + 1))
+        //            return 0;
+        //    }
+        //}
+
+        //if (board[0][3] > 6 && board[0][3] == board[1][2])
+        //    if (board[1][0] > 3 && board[1][0] == board[2][1])
+        //    return 0;
+
+        // Check if game over
+        if (!m_state.checkIfCanGo())
+            return 0;
+
         //Check if can only go down
         Board2048 tempBoard= new Board2048(m_state);
         boolean canMoveUp = tempBoard.checkIfCanMoveDirection(Board2048.Directions.UP);
         boolean canMoveLeft = tempBoard.checkIfCanMoveDirection(Board2048.Directions.LEFT);
         boolean canMoveRight = tempBoard.checkIfCanMoveDirection(Board2048.Directions.RIGHT);
-        if ((!canMoveUp && !canMoveLeft && !canMoveRight) && (spaceCount > 4))
-            return finalRating/2;
-
-        if (!m_state.checkIfCanGo())
-            return 0;
+        boolean canMoveDown = tempBoard.checkIfCanMoveDirection(Board2048.Directions.DOWN);
+        if ((!canMoveUp && !canMoveLeft && !canMoveRight && canMoveDown))
+            return finalRating/4;
 
         return  finalRating;
     }
@@ -140,6 +162,16 @@ public class SimulationTreeNode {
         public Point(int x, int y) {
             this.x = x;
             this.y = y;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (!(obj instanceof Point))
+                return false;
+            Point p = (Point) obj;
+            if (p.x == this.x && p.y == this.y)
+                return true;
+            else return false;
         }
     }
 }
