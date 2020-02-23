@@ -103,12 +103,9 @@ public class Gui2048 extends Application {
     Text depthText;
     int depth = 7;
 
-    /*
-     * Name: start
-     * Purpose: Act like "main" method and create the GUI. Help setting up
-     * 			the GUI and organize it. Main stack
-     * Parameters: primaryStage: main stage of the GUI
-     * Return: Nothing
+    /**
+     * The "main()" method for JavaFX. Help setting up the GUI.
+     * @param primaryStage the main stage of the GUI
      */
     @Override
     public void start(Stage primaryStage) {
@@ -124,13 +121,7 @@ public class Gui2048 extends Application {
         pane.setHgap(15);
         pane.setVgap(15);
 
-        /*
-         * Name: (Annonymous)
-         * Purpose: Handle key presses
-         * Para: No
-         * Return: Nope
-         */
-        pane.setOnKeyPressed(normalKeyHandler);
+                pane.setOnKeyPressed(normalKeyHandler);
         /** Add your Code for the GUI Here */
         initGrid();//initialize the GridPane
         mainPane.getChildren().add(pane);
@@ -143,11 +134,8 @@ public class Gui2048 extends Application {
     }
 
     /** Add your own Instance Methods Here */
-    /*
-     * Name: initGrid
-     * Purpose: Initialize the grid on GUI
-     * Parameters: None
-     * Return: Nope
+    /**
+     * Initialize the grid (game board) in the GUI.
      */
     private void initGrid() {
         gameName.setFont(Font.font("Comic Sans MS", FontPosture.ITALIC, 40));
@@ -197,11 +185,9 @@ public class Gui2048 extends Application {
         update();
     }
 
-    /*
-     * Name: update
-     * Purpose: Update the GUI and translate board object into GUI
-     * Parameters: No
-     * Return: None
+    /**
+     * Update the GUI once the game is changed. This method will needed to be
+     * called manually.
      */
     private void update() {//update the grid GUI & Score
         scoreValue = (int) board.getScore();//get the score
@@ -284,6 +270,9 @@ public class Gui2048 extends Application {
             runAI();
     }
 
+    /**
+     * Restart the game and reset the GUI (if the Game Over pan showed up).
+     */
     private void restart() {
         board = new Board2048();
         pane.requestFocus();
@@ -295,6 +284,10 @@ public class Gui2048 extends Application {
         }
     }
 
+    /**
+     * Cycle through the depth of search that the AI will perform. Allow
+     * user to specify how cautious they want the AI to go.
+     */
     private void switchDepthOfSearch() {
         if (depth == 7)
             depth = 9;
@@ -305,6 +298,10 @@ public class Gui2048 extends Application {
         depthText.setText("Depth of Search: " + depth);
     }
 
+    /**
+     * Enable AI and update KeyPress Handler to limit user's interaction with
+     * the game while the AI is running.
+     */
     private void enableAI() {
         isAIEnabled = true;
         runAI();
@@ -312,6 +309,10 @@ public class Gui2048 extends Application {
         pane.setOnKeyPressed(limitedKeyHandler);
     }
 
+    /**
+     * Disable AI and and remove user's limitation while AI is running, allow
+     * user to take full control of the game.
+     */
     private void disableAI() {
         stopAI();
         isAIEnabled = false;
@@ -319,6 +320,9 @@ public class Gui2048 extends Application {
         pane.setOnKeyPressed(normalKeyHandler);
     }
 
+    /**
+     * Run AI in a separate task so the GUI remains responsive.
+     */
     private void runAI() {
         // Only run AI if game is not over
         if (board.checkIfCanGo()) {
@@ -335,11 +339,18 @@ public class Gui2048 extends Application {
         }
     }
 
+    /**
+     * Stop the AI by canceling the existing AI task.
+     */
     private void stopAI() {
         aiTask.cancel();
     }
 
     /** Event Handlers **/
+
+    /**
+     * Normal KeyPress Handler. This handler allow user full control over the game.
+     */
     EventHandler<KeyEvent> normalKeyHandler = new EventHandler<KeyEvent>() {
         @Override
         public void handle(KeyEvent keyEvent) {
@@ -386,6 +397,10 @@ public class Gui2048 extends Application {
         }
     };
 
+    /**
+     * Limited KeyPress Handler. Only allow user to change the depth, or stop
+     * the AI while the AI is running.
+     */
     EventHandler<KeyEvent> limitedKeyHandler = new EventHandler<KeyEvent>() {
         @Override
         public void handle(KeyEvent keyEvent) {
@@ -410,6 +425,11 @@ public class Gui2048 extends Application {
         Board2048 m_gameBoard;
         int m_depth = 7;
 
+        /**
+         * Public constructor to create an AI task.
+         * @param originalBoard original game board that AI is supposed to solve
+         * @param depth depth of search that AI will perform
+         */
         public AiTask(Board2048 originalBoard, int depth) {
             this.m_gameBoard = originalBoard;
             m_depth = depth;

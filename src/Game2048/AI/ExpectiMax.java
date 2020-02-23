@@ -12,6 +12,12 @@ public class ExpectiMax {
     private HashMap<String, SimulationTreeNode> m_memory_build;
     private HashMap<String, Float> m_memory_calculate;
 
+    /**
+     * Consturctor to create an instance of the Expectimax algorithm given the root state.
+     * @param rootState original game state, will become the root of the tree
+     * @param currentScore score achieved by the given game state
+     * @param depth_of_tree number of levels that will be in the tree
+     */
     public ExpectiMax(Board2048 rootState, long currentScore, int depth_of_tree) {
         this.m_rootNode = new SimulationTreeNode(rootState, "max", currentScore);
         this.m_currentScore = currentScore;
@@ -20,6 +26,9 @@ public class ExpectiMax {
         m_memory_calculate = new HashMap<>();
     }
 
+    /**
+     * Pre-process the root state to determine parameters and build the tree.
+     */
     public void initAndBuildTree() {
         int emptySpace = 0;
         int largest = 0;
@@ -41,10 +50,17 @@ public class ExpectiMax {
             buildTree(m_rootNode, m_depthOfTree, 0);
     }
 
+    /**
+     * Recursively build the tree.
+     * @param node node to build the tree off of
+     * @param level current level of the tree that this node belongs to
+     * @param nextPlayer next player in turn
+     */
     public void buildTree(SimulationTreeNode node, int level, int nextPlayer) {
         if ((node == null) || (level == 0))
             return;
 
+        // Build tree for max player
         if (nextPlayer  % 2 == 0) {
             for (Board2048.Directions direction :Board2048.Directions.values()) {
                 // Create a copy
@@ -71,6 +87,7 @@ public class ExpectiMax {
             }
         }
 
+        // Build tree for random player
         else {
             int count = 0;
             for (int y = 0; y < node.getState().getBoardSize(); y++) {
@@ -96,6 +113,13 @@ public class ExpectiMax {
         }
     }
 
+    /**
+     * Recursively perform expectimax algorithm to determine value of the given node.
+     * @param node node to calculate expectimax value
+     * @param level current level of the tree that this node belongs to
+     * @return expectimax value of the node, will be used by parent node
+     * to determine their value
+     */
     public float expectimax(SimulationTreeNode node, int level) {
         String stateKey = node.getState().toStringKey(level-1);
         if (m_memory_calculate.containsKey(stateKey))
@@ -129,18 +153,18 @@ public class ExpectiMax {
             }
             // Nobody? Error!
             else {
-                System.err.println("ERROR! Node is not terminal, max, or chance player");
+                System.err.println("ERROR: Node is not terminal, max, or chance player");
                 return 0;
             }
         }
     }
 
+    /**
+     * Compute optimal decision from the root state. Will build the tree and
+     * perform Expectimax on the root node.
+     * @return optimal move represented by a Directions object
+     */
     public Board2048.Directions computeDecision() {
-        int[][] grid = m_rootNode.getState().getBoard();
-        //if ((grid[0][3] == grid[1][2]) && (grid[1][2] == grid[1][3]))
-        //    if ((grid[0][3] != 0) && (grid[1][2] != 0) && (grid[1][3] != 0))
-        //        if ((grid[0][0] != 0) && (grid[0][1] != 0) && (grid[0][2] != 0))
-        //            return Board2048.Directions.UP;
         initAndBuildTree();
         float maxValue = -Float.MAX_VALUE;
         Board2048.Directions maxDirection = null;
@@ -163,14 +187,26 @@ public class ExpectiMax {
         return maxDirection;
     }
 
+    /**
+     * Get root node of the Expectimax instance.
+     * @return root node
+     */
     public SimulationTreeNode getRootNode() {
         return m_rootNode;
     }
 
+    /**
+     * Get current score of the current game state.
+     * @return current score
+     */
     public long getCurrentScore() {
         return m_currentScore;
     }
 
+    /**
+     * Get the depth of tree that AI will perform Expectimax on.
+     * @return depth of tree
+     */
     public int getDepthOfTree() {
         return m_depthOfTree;
     }

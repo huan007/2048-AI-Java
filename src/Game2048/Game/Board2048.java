@@ -8,7 +8,9 @@ public class Board2048 {
     private int m_boardSize;
     private final int smallerTileChance = 100;
 
-    // Default Constructor
+    /**
+     * Default constructor. Create 4x4 board and place 2 random tiles.
+     */
     public Board2048() {
         this.m_score = 0;
         this.m_boardSize = 4;
@@ -22,7 +24,12 @@ public class Board2048 {
         placeRandomTile();
     }
 
-    // Constructor with known score and board
+    /**
+     * Deep copy constructor.
+     * @param score initial score
+     * @param board initial game board (will be deep copied)
+     * @param boardSize game board size
+     */
     public Board2048(long score, int[][] board, int boardSize) {
         this();
         this.m_boardSize = boardSize;
@@ -36,11 +43,17 @@ public class Board2048 {
         }
     }
 
-    // Deep Copy Constructor
+    /**
+     * Simpler deep copy constructor.
+     * @param board2048 original Board2048 object to be deep copied
+     */
     public Board2048(Board2048 board2048) {
         this(board2048.getScore(), board2048.getBoard(), board2048.getBoardSize());
     }
 
+    /**
+     * Rotate the game board clock wise
+     */
     protected void rotateMatrixClockwise() {
         int[][] board = this.getBoard();
         int boardSize = this.m_boardSize;
@@ -59,6 +72,11 @@ public class Board2048 {
         }
     }
 
+    /**
+     * Check whether or not the board can be moved to the left.
+     * Prevent placing unnecessary random tiles.
+     * @return true if the board can be moved to the left, false otherwise.
+     */
     public boolean canMove() {
         int[][] board = this.m_board;
         int boardSize = this.m_boardSize;
@@ -73,6 +91,10 @@ public class Board2048 {
         return false;
     }
 
+    /**
+     * Check whether or not game is over.
+     * @return true if game is not over, false if game is over.
+     */
     public boolean checkIfCanGo() {
         int[][] tm = this.m_board;
         int range = m_boardSize * m_boardSize;
@@ -91,6 +113,9 @@ public class Board2048 {
         return false;
     }
 
+    /**
+     * Place a new tile randomly in one of the empty spaces of the board.
+     */
     public void placeRandomTile() {
         int boardSize = this.m_boardSize;
         int i = 0;
@@ -108,28 +133,29 @@ public class Board2048 {
             this.m_board[i][j] = 2;
     }
 
+    /**
+     * Move the board in the given direction.
+     * @param direction direction to move the board in
+     */
     public void move(int direction) {
         for (int i = 0; i < direction; i++) {
             this.rotateMatrixClockwise();
-            //System.out.println("Rotating Counter Clockwise");
-            //System.out.println(this.toString());
         }
         if (this.canMove()) {
             this.moveTiles();
-            //System.out.println("Moved");
-            //System.out.println(this.toString());
             this.mergeTiles();
-            //System.out.println("Merged");
-            //System.out.println(this.toString());
             this.placeRandomTile();
-            //System.out.println("Place Random Piece");
-            //System.out.println(this.toString());
         }
         for (int i = 0; i < ((4 - direction) % 4); i++) {
             this.rotateMatrixClockwise();
         }
     }
 
+    /**
+     * Check if the board can be moved in the given direction.
+     * @param direction direction that the user want to move the board in
+     * @return true if the board can be moved, false if it cannot
+     */
     public boolean checkIfCanMoveDirection(Directions direction) {
         boolean result = false;
         for (int i = 0; i < direction.getRotateValue(); i++) {
@@ -144,6 +170,12 @@ public class Board2048 {
         return result;
     }
 
+    /**
+     * Move the board in the given direction without spawning new tile.
+     * This method will be used heavily by the AI to separate user's turn
+     * and the game's turn.
+     * @param direction direction to move the board in
+     */
     public void moveOnly(int direction) {
         for (int i = 0; i < direction; i++)
             this.rotateMatrixClockwise();
@@ -155,7 +187,9 @@ public class Board2048 {
             this.rotateMatrixClockwise();
     }
 
-
+    /**
+     * Move all the tiles to the left side of the board.
+     */
     public void moveTiles() {
         int[][] tm = this.m_board;
         int boardSize = this.m_boardSize;
@@ -171,6 +205,9 @@ public class Board2048 {
         }
     }
 
+    /**
+     * Merge adjacent tile with same value. Should be called after moveTiles().
+     */
     public void mergeTiles() {
         int[][] tm = this.m_board;
         int boardSize = this.m_boardSize;
@@ -186,7 +223,13 @@ public class Board2048 {
         }
     }
 
-
+    /**
+     * Sum all the elements of the list from the given index. Has the same
+     * function as the "sum" function in Python.
+     * @param list list of integers to be summed
+     * @param start_index index to begin counting (inclusive).
+     * @return sum of desired elements.
+     */
     private int sumList(int[] list, int start_index) {
         int sum = 0;
         for (int i = start_index; i < list.length; i++) {
@@ -195,22 +238,44 @@ public class Board2048 {
         return sum;
     }
 
+    /**
+     * Get rotation value from Directions object.
+     * @param direction Directions object to extract value from
+     * @return how many rotations needed to perform before moving boards to the left
+     */
     public int getRotations(Directions direction) {
         return direction.getRotateValue();
     }
 
+    /**
+     * Get score of the current game.
+     * @return score
+     */
     public long getScore() {
         return m_score;
     }
 
+    /**
+     * Get the 2D  array that represent the game board.
+     * @return game board represented in 2D array
+     */
     public int[][] getBoard() {
         return m_board;
     }
 
+    /**
+     * Get size of size game board.
+     * @return size of the game board
+     */
     public int getBoardSize() {
         return m_boardSize;
     }
 
+    /**
+     * Compare this Board2048 to another object.
+     * @param obj object to be compared
+     * @return true if equals, false otherwise
+     */
     @Override
     public boolean equals(Object obj) {
         Board2048 board = (Board2048) obj;
@@ -226,6 +291,10 @@ public class Board2048 {
         return true;
     }
 
+    /**
+     * Provide string representation of the game board for printing.
+     * @return string representation of the game board
+     */
     @Override
     public String toString() {
         String result = "";
@@ -239,6 +308,12 @@ public class Board2048 {
         return result;
     }
 
+    /**
+     * Provide serialized data of the board to be used as a key in HashMap
+     * to identify unique game state at the given level.
+     * @param level level that the game state appear in the decision tree
+     * @return serial representation of the data
+     */
     public String toStringKey(int level) {
         String result = "";
         for (int i = 0; i < m_boardSize; i++) {
@@ -253,18 +328,34 @@ public class Board2048 {
         return result;
     }
 
+    /**
+     * Enumerated class that represent directions to move the board in.
+     */
     public enum Directions {
         UP(1), DOWN(3), LEFT(0), RIGHT(2);
         private final int rotateValue;
 
+        /**
+         * Constructor with integer rotation value.
+         * @param rotateValue
+         */
         Directions(int rotateValue) {
             this.rotateValue = rotateValue;
         }
 
+        /**
+         * Get the number of rotations to perform on the board before moving the
+         * board left will achieve a move in the given direction.
+         * @return
+         */
         public int getRotateValue() {
             return rotateValue;
         }
 
+        /**
+         * Get random Directions object.
+         * @return random Directions object
+         */
         public static Directions getRandomDirection() {
             Random random = new Random();
             return values()[random.nextInt(values().length)];
