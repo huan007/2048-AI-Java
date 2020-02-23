@@ -111,19 +111,11 @@ public class Board2048 {
     public void move(int direction) {
         for (int i = 0; i < direction; i++) {
             this.rotateMatrixClockwise();
-            //System.out.println("Rotating Counter Clockwise");
-            //System.out.println(this.toString());
         }
         if (this.canMove()) {
             this.moveTiles();
-            //System.out.println("Moved");
-            //System.out.println(this.toString());
             this.mergeTiles();
-            //System.out.println("Merged");
-            //System.out.println(this.toString());
             this.placeRandomTile();
-            //System.out.println("Place Random Piece");
-            //System.out.println(this.toString());
         }
         for (int i = 0; i < ((4 - direction) % 4); i++) {
             this.rotateMatrixClockwise();

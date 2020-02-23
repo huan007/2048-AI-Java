@@ -10,12 +10,14 @@ public class Benchmark2048 {
         GameInstance.initialize(9, numberOfGames, numOfThreads);
         Thread[] threads = new Thread[numOfThreads];
         long startTime = System.currentTimeMillis();
+        // Spawn Threads
         for (int i = 0; i < numOfThreads; i++) {
             Thread t = new Thread(new GameInstance());
             threads[i] = t;
             t.start();
         }
 
+        // Join all threads
         for (int i = 0; i < numOfThreads; i++) {
             try {
                 threads[i].join();

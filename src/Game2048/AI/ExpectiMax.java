@@ -129,18 +129,13 @@ public class ExpectiMax {
             }
             // Nobody? Error!
             else {
-                System.err.println("ERROR! Node is not terminal, max, or chance player");
+                System.err.println("ERROR: Node is not terminal, max, or chance player");
                 return 0;
             }
         }
     }
 
     public Board2048.Directions computeDecision() {
-        int[][] grid = m_rootNode.getState().getBoard();
-        //if ((grid[0][3] == grid[1][2]) && (grid[1][2] == grid[1][3]))
-        //    if ((grid[0][3] != 0) && (grid[1][2] != 0) && (grid[1][3] != 0))
-        //        if ((grid[0][0] != 0) && (grid[0][1] != 0) && (grid[0][2] != 0))
-        //            return Board2048.Directions.UP;
         initAndBuildTree();
         float maxValue = -Float.MAX_VALUE;
         Board2048.Directions maxDirection = null;
