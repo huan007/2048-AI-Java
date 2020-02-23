@@ -16,9 +16,9 @@ public class SimulationTreeNode {
     private double m_chance;
     private List<SimulationTreeNode> m_children;
 
-    private final float WEIGHT_SCALE = 0.000001f;
-    private final float SPACE_SCALE = 50;
-    private final float SMOOTH_SCALE = 50;
+    private final double WEIGHT_SCALE = 0.000001f;
+    private final double SPACE_SCALE = 50;
+    private final double SMOOTH_SCALE = 50;
 
 
     private static double[][] m_weightMatrix = new double[][] {
@@ -54,11 +54,11 @@ public class SimulationTreeNode {
      * Calculate the payoff for this node. Should only be called on terminal nodes.
      * @return payoff value that will be used by Expectiminimax to make decisions
      */
-    public float payoff() {
+    public double payoff() {
         int boardSize = m_state.getBoardSize();
-        float baseRating = 0;
-        float spaceRating = 0;
-        float smoothRating = 0;
+        double baseRating = 0;
+        double spaceRating = 0;
+        double smoothRating = 0;
         int spaceCount = 0;
         HashMap<Integer, List<Point>> tileMap = new HashMap<>();
         for (int x = 0; x < boardSize; x++) {
@@ -90,7 +90,7 @@ public class SimulationTreeNode {
         baseRating = baseRating * WEIGHT_SCALE;
         spaceRating = spaceCount * SPACE_SCALE;
         smoothRating = smoothRating * SMOOTH_SCALE;
-        float finalRating = baseRating + spaceRating + smoothRating;
+        double finalRating = baseRating + spaceRating + smoothRating;
 
         // Check if game over
         if (!m_state.checkIfCanGo())
