@@ -444,7 +444,7 @@ public class Gui2048 extends Application {
         System.out.println("====");
         System.out.println("Instruction:");
         System.out.println("UP, DOWN, LEFT, RIGHT - To play the game, shifting " +
-                "tiles ot one side and merge them together.");
+                "tiles to one side and merge them together.");
         System.out.println("ENTER - Enable/Disable the AI.");
         System.out.println("C     - Change level of AI intelligence.");
         System.out.println("====");
