@@ -445,13 +445,13 @@ public class Gui2048 extends Application {
         System.out.println("Instruction:");
         System.out.println("UP, DOWN, LEFT, RIGHT - To play the game, shifting " +
                 "tiles ot one side and merge them together.");
-        System.out.println("ENTER \t- Enable/Disable the AI.");
-        System.out.println("C \t\t- Change level of AI intelligence.");
+        System.out.println("ENTER - Enable/Disable the AI.");
+        System.out.println("C     - Change level of AI intelligence.");
         System.out.println("====");
         System.out.println();
-        System.out.println("*\tEnabling the AI will disable your control. Disable the " +
+        System.out.println("*  Enabling the AI will disable your control. Disable the " +
                 "AI to gain full control again.");
-        System.out.println("**\tLevel of AI intelligence is based on depth of search " +
+        System.out.println("** Level of AI intelligence is based on depth of search " +
                 "of the Expectimax Algorithm.");
     }
     /** DO NOT EDIT BELOW */
