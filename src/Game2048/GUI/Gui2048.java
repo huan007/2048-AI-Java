@@ -112,8 +112,7 @@ public class Gui2048 extends Application {
         // Set the spacing between the Tiles
         pane.setHgap(15);
         pane.setVgap(15);
-
-                pane.setOnKeyPressed(normalKeyHandler);
+        pane.setOnKeyPressed(normalKeyHandler);
         /** Add your Code for the GUI Here */
         initGrid();//initialize the GridPane
         mainPane.getChildren().add(pane);
@@ -123,6 +122,7 @@ public class Gui2048 extends Application {
         primaryStage.show();
         pane.requestFocus();
         pane.setDisable(false);
+        printDirections();
     }
 
     /** Add your own Instance Methods Here */
@@ -433,6 +433,26 @@ public class Gui2048 extends Application {
             Board2048.Directions bestDirection = expectiMax.computeDecision();
             return bestDirection;
         }
+    }
+
+    /**
+     * Print directions for the GUI to the command line
+     */
+    public void printDirections() {
+        System.out.println("------------------------------------");
+        System.out.println("Welcome to 2048 Game with AI!");
+        System.out.println("====");
+        System.out.println("Instruction:");
+        System.out.println("UP, DOWN, LEFT, RIGHT - To play the game, shifting " +
+                "tiles ot one side and merge them together.");
+        System.out.println("ENTER \t- Enable/Disable the AI.");
+        System.out.println("C \t\t- Change level of AI intelligence.");
+        System.out.println("====");
+        System.out.println();
+        System.out.println("*\tEnabling the AI will disable your control. Disable the " +
+                "AI to gain full control again.");
+        System.out.println("**\tLevel of AI intelligence is based on depth of search " +
+                "of the Expectimax Algorithm.");
     }
     /** DO NOT EDIT BELOW */
 
