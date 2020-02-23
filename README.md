@@ -24,3 +24,11 @@ and open with IDEA.
 ```
 make
 ```
+
+Instructions
+-----
+| **Button** | **Functions** |
+| ------ | ------ |
+| UP, DOWN, LEFT, RIGHT | Play the game, shifting tiles to one side and merge them together to gain points. |
+| ENTER | Enable/Disable the AI. User will lose control of the game when AI is enabled. Disable AI to gain control back. | 
+| C | Change AI's level of intelligence (depth of search in Expectiminimax) | 
