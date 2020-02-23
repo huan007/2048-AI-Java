@@ -8,9 +8,9 @@ public class ExpectiMax {
     private SimulationTreeNode m_rootNode;
     private long m_currentScore;
     private int m_depthOfTree;
-    private int m_extraDepth = 0;
+    private int m_extraDepth = 2;
     private HashMap<String, SimulationTreeNode> m_memory_build;
-    private HashMap<String, Float> m_memory_calculate;
+    private HashMap<String, Double> m_memory_calculate;
 
     /**
      * Consturctor to create an instance of the Expectimax algorithm given the root state.
@@ -120,22 +120,22 @@ public class ExpectiMax {
      * @return expectimax value of the node, will be used by parent node
      * to determine their value
      */
-    public float expectimax(SimulationTreeNode node, int level) {
+    public double expectimax(SimulationTreeNode node, int level) {
         String stateKey = node.getState().toStringKey(level-1);
         if (m_memory_calculate.containsKey(stateKey))
             return m_memory_calculate.get(stateKey);
         else {
             // Terminal Node
             if (node.isTerminal()) {
-                float payoffValue = node.payoff();
+                double payoffValue = node.payoff();
                 m_memory_calculate.put(stateKey, payoffValue);
                 return payoffValue;
             }
             // Max Player Node
             else if (node.isMaxPlayer()) {
-                float maxValue = -Float.MAX_VALUE;
+                double maxValue = -Float.MAX_VALUE;
                 for (SimulationTreeNode child : node.getChildren()) {
-                    float newValue = expectimax(child, level-1);
+                    double newValue = expectimax(child, level-1);
                     if (newValue > maxValue)
                         maxValue = newValue;
                 }
@@ -144,7 +144,7 @@ public class ExpectiMax {
             }
             // Chance Player Node
             else if (node.isChancePlayer()) {
-                float value = 0;
+                double value = 0;
                 for (SimulationTreeNode child : node.getChildren()) {
                     value += expectimax(child, level-1) * child.getChance();
                 }
@@ -166,11 +166,11 @@ public class ExpectiMax {
      */
     public Board2048.Directions computeDecision() {
         initAndBuildTree();
-        float maxValue = -Float.MAX_VALUE;
+        double maxValue = -Float.MAX_VALUE;
         Board2048.Directions maxDirection = null;
         int repeatCount = 0;
         for (SimulationTreeNode child : m_rootNode.getChildren()) {
-            float value = expectimax(child, m_depthOfTree);
+            double value = expectimax(child, m_depthOfTree);
             if (value > maxValue) {
                 maxValue = value;
                 maxDirection = child.getDirection();
