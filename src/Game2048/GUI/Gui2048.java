@@ -7,26 +7,18 @@ package Game2048.GUI; /**
  * Name: Huan Nguyen 
  * Login: cs8bwagg 
  * Date:  February 1, 2016
- * File:  GUI2048.java  
- * Sources of Help: Once upon a time, a boy was borned with an Incredible Mind. 
- Long story short, my Incredible Intelligence. jk~ 
- * Purpose: Create a GUI for 2048 game. (Front-end engine)
- *            
- *
+ * File:  GUI2048.java
  */
 
 /*
  *	Class: Gui2048
  *	Description: Contain a functional GUI for the game 2048. 
  *			Can update changes and take in user key presses
- as input. 
+ *          as input.
  *
  *	Bugs: Nada.
  *
  *	Author: Huan Nguyen
- *
- *
- *
  */
 
 import Game2048.AI.ExpectiMax;
