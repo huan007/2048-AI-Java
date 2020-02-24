@@ -18,7 +18,10 @@ Software requirements are as follow:
 How to run the program
 -----
 **Using Intellij IDEA**: I have included necessary files, just pull the repo 
-and open with IDEA.
+and open with IDEA. To compile and play the game, run the Gui2048 class in the following path:
+```
+src/Game2048/GUI/
+```
 
 **Using terminal in Linux or Mac**: run the following command to compile and run the game  
 ```
