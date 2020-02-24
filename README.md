@@ -12,7 +12,7 @@ Install & Requirements
 -----
 You can either run this project inside Intellij IDEA or in terminal on Linux/Mac.
 Software requirements are as follow:  
-1. JDK 11 and Make (For Linux/Mac)  
+1. JDK 8 and Make (For Linux/Mac)  
 2. Intellij IDEA (If you are using IDEA to compile/run the game)  
 
 How to run the program
