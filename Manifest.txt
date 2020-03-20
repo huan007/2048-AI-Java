@@ -1,0 +1,2 @@
+Main-Class: Game2048.GUI.Gui2048
+
