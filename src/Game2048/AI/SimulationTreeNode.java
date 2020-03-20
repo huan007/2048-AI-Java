@@ -28,6 +28,17 @@ public class SimulationTreeNode {
             {pow(8,0), pow(8,1), pow(8,2), pow(8,3)}
     };
 
+    private static double[][] m_weightMatrix2 = new double[][] {
+            {pow(16,15), pow(16,14), pow(16,13), pow(16,12)},
+            {pow(16,11), pow(16,10), pow(16,9), pow(16,8)},
+            {pow(16,7), pow(16,6), pow(16,5), pow(16,4)},
+            {pow(16,3), pow(16,2), pow(16,1), pow(16,0)}
+    };
+
+    private static double[][][] m_weightMatrices = new double[][][] {
+            m_weightMatrix, m_weightMatrix2
+    };
+
     /**
      * Constructor to create a node with the given state and score.
      * @param state state to be represented by the node
@@ -64,7 +75,7 @@ public class SimulationTreeNode {
         for (int x = 0; x < boardSize; x++) {
             for (int y = 0; y < boardSize; y++) {
                 int value = m_state.getBoard()[x][y];
-                baseRating += pow(2,value) * m_weightMatrix[x][y];
+                baseRating += pow(2,value) * m_weightMatrix2[x][y];
                 if (value == 0)
                     spaceCount++;
                 if (!tileMap.containsKey(value))
